@@ -9,7 +9,15 @@ class Piece():
                  stats: Tuple[int, int]):
         self.name = name
         self.position = Position(*position)
-        self.stats = Stats(*stats)
+        self._stats = Stats(*stats)
+
+    @property
+    def attack(self):
+        return self._stats.attack
+
+    @property
+    def defense(self):
+        return self._stats.defense
 
 
 @dataclass
@@ -37,6 +45,14 @@ class Knight(Piece):
     def unequip(self):
         self.item.knight = None
         self.item = None
+
+    @property
+    def attack(self):
+        return super().attack + self.item.attack
+
+    @property
+    def defense(self):
+        return super().defense + self.item.defense
 
 
 class Item(Piece):

@@ -17,7 +17,7 @@
 ## Equipment
 - [x] implement knight equip item
 - [x] implement knight drop item 
-- [] implement knight gain item bonus
+- [x] implement knight gain item bonus
 
 ## Movement
 - [] implement direction enum
