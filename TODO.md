@@ -1,9 +1,9 @@
 # TODO
 ## Static set up
-- [] implement `Piece`
+- [x] implement `Piece`
   - [x] .name
   - [x] .position: (row, col)
-  - [] .score : [atk, def]
+  - [x] .score : [atk, def]
 - [] implement `Item`
   - [] .knight
 - [] implement `Knight`
