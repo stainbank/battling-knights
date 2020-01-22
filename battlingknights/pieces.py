@@ -27,6 +27,7 @@ class Stats():
 class Knight(Piece):
     def __init__(self, name: str, position: Tuple[int, int],
                  stats: Tuple[int, int]):
+        super().__init__(name, position, stats)
         self.item: Optional[Item] = None
 
     def equip(self, item: Item):
@@ -41,4 +42,5 @@ class Knight(Piece):
 class Item(Piece):
     def __init__(self, name: str, position: Tuple[int, int],
                  stats: Tuple[int, int]):
+        super().__init__(name, position, stats)
         self.knight: Optional[Knight] = None
