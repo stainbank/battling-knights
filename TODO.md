@@ -4,10 +4,10 @@
   - [x] .name
   - [x] .position: (row, col)
   - [x] .score : [atk, def]
-- [] implement `Item`
-  - [] .knight
-- [] implement `Knight`
-  - [] .item 
+- [x] implement `Item`
+  - [x] .knight
+- [x] implement `Knight`
+  - [x] .item 
 - [] implement `Arena`
   - [] .size
   - [] .setup
@@ -15,8 +15,8 @@
   - [] .__repr__()
 
 ## Equipment
-- [] implement knight equip item
-- [] implement knight drop item 
+- [x] implement knight equip item
+- [x] implement knight drop item 
 - [] implement knight gain item bonus
 
 ## Movement

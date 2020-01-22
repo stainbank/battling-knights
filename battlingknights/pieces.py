@@ -1,5 +1,6 @@
+from __future__ import annotations
 import collections
-from typing import Tuple
+from typing import Tuple, Optional
 from dataclasses import dataclass
 
 
@@ -21,3 +22,23 @@ class Position():
 class Stats():
     attack: int
     defense: int
+
+
+class Knight(Piece):
+    def __init__(self, name: str, position: Tuple[int, int],
+                 stats: Tuple[int, int]):
+        self.item: Optional[Item] = None
+
+    def equip(self, item: Item):
+        self.item = item
+        item.knight = self
+
+    def unequip(self):
+        self.item.knight = None
+        self.item = None
+
+
+class Item(Piece):
+    def __init__(self, name: str, position: Tuple[int, int],
+                 stats: Tuple[int, int]):
+        self.knight: Optional[Knight] = None
