@@ -20,8 +20,8 @@
 - [x] implement knight gain item bonus
 
 ## Movement
-- [] implement direction enum
-- [] implement piece movement
+- [x] implement direction enum
+- [x] implement piece movement
 - [] implement knight carrying item
 - [] implement Arena limits
   - [] position change checks limits

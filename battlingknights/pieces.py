@@ -2,6 +2,7 @@ from __future__ import annotations
 import collections
 from typing import Tuple, Optional
 from dataclasses import dataclass
+import enum
 
 
 class Piece():
@@ -19,11 +20,17 @@ class Piece():
     def defense(self):
         return self._stats.defense
 
+    def move(self, direction: Direction):
+        self.position += direction.value
+
 
 @dataclass
 class Position():
     row: int
     col: int
+
+    def __add__(self, other: Position):
+        return Position(self.row + other.row, self.col + other.col)
 
 
 @dataclass
@@ -60,3 +67,10 @@ class Item(Piece):
                  stats: Tuple[int, int]):
         super().__init__(name, position, stats)
         self.knight: Optional[Knight] = None
+
+
+class Direction(enum.Enum):
+    NORTH = Position(-1, 0)
+    EAST = Position(0, 1)
+    SOUTH = Position(1, 0)
+    WEST = Position(0, -1)

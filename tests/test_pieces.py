@@ -1,5 +1,5 @@
 import pytest
-from battlingknights.pieces import Piece, Knight, Item
+from battlingknights.pieces import Piece, Knight, Item, Direction
 
 
 @pytest.fixture
@@ -50,3 +50,20 @@ def test_knight_gains_item_bonus():
     knight.equip(item)
     assert knight.attack == knight_attack + item_attack
     assert knight.defense == knight_defense + item_defense
+
+
+def test_knight_position_updates_on_move():
+    row, col = original_position = (0, 0)
+    knight = Knight('Moves', original_position, (0, 0))
+    knight.move(Direction.EAST)
+    assert knight.position.row == 0
+    assert knight.position.col == 1
+    knight.move(Direction.SOUTH)
+    assert knight.position.row == 1
+    assert knight.position.col == 1
+    knight.move(Direction.WEST)
+    assert knight.position.row == 1
+    assert knight.position.col == 0
+    knight.move(Direction.NORTH)
+    assert knight.position.row == row
+    assert knight.position.col == col
