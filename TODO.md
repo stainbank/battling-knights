@@ -1,13 +1,13 @@
 # TODO
 ## Static set up
-- [] implement `Piece`
-  - [] .name
-  - [] .position: (row, col)
-  - [] .score : [atk, def]
-- [] implement `Item`
-  - [] .knight
-- [] implement `Knight`
-  - [] .item 
+- [x] implement `Piece`
+  - [x] .name
+  - [x] .position: (row, col)
+  - [x] .score : [atk, def]
+- [x] implement `Item`
+  - [x] .knight
+- [x] implement `Knight`
+  - [x] .item 
 - [] implement `Arena`
   - [] .size
   - [] .setup
@@ -15,9 +15,9 @@
   - [] .__repr__()
 
 ## Equipment
-- [] implement knight equip item
-- [] implement knight drop item 
-- [] implement knight gain item bonus
+- [x] implement knight equip item
+- [x] implement knight drop item 
+- [x] implement knight gain item bonus
 
 ## Movement
 - [] implement direction enum
