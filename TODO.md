@@ -22,7 +22,7 @@
 ## Movement
 - [x] implement direction enum
 - [x] implement piece movement
-- [] implement knight carrying item
+- [x] implement knight carrying item
 - [] implement Arena limits
   - [] position change checks limits
   - [] implement drowning

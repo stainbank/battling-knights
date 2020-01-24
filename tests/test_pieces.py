@@ -67,3 +67,18 @@ def test_knight_position_updates_on_move():
     knight.move(Direction.NORTH)
     assert knight.position.row == row
     assert knight.position.col == col
+
+
+def test_equipped_item_moves_with_knight():
+    position = (0, 0)
+    knight = Knight('Hunter', position, (0, 0))
+    item = Item('Fist', position, (0, 0))
+    knight.equip(item)
+    knight.move(Direction.EAST)
+    assert knight.position == item.position
+    knight.move(Direction.SOUTH)
+    assert knight.position == item.position
+    knight.move(Direction.WEST)
+    assert knight.position == item.position
+    knight.move(Direction.NORTH)
+    assert knight.position == item.position

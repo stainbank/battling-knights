@@ -61,6 +61,11 @@ class Knight(Piece):
     def defense(self):
         return super().defense + self.item.defense
 
+    def move(self, direction: Direction):
+        super().move(direction)
+        if self.item:
+            self.item.move(direction)
+
 
 class Item(Piece):
     def __init__(self, name: str, position: Tuple[int, int],
