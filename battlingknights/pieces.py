@@ -4,13 +4,16 @@ from typing import Tuple, Optional
 from dataclasses import dataclass
 import enum
 
+from battlingknights import game
+
 
 class Piece():
-    def __init__(self, name: str, position: Tuple[int, int],
+    def __init__(self, arena: game.Arena, name: str, position: Tuple[int, int],
                  stats: Tuple[int, int]):
-        self.name = name
-        self.position = Position(*position)
-        self._stats = Stats(*stats)
+        self.arena: game.Arena = arena
+        self.name: str = name
+        self.position: Optional[Position] = Position(*position)
+        self._stats: Stats = Stats(*stats)
 
     @property
     def attack(self):
@@ -21,7 +24,11 @@ class Piece():
         return self._stats.defense
 
     def move(self, direction: Direction):
-        self.position += direction.value
+        new_position = self.position + direction.value
+        if not new_position.in_limits(self.arena.limits):
+            raise OutsideLimitsException(
+                f'Position {self} outside limits {self.arena.limits}')
+        self.position = new_position
 
 
 @dataclass
@@ -32,6 +39,12 @@ class Position():
     def __add__(self, other: Position):
         return Position(self.row + other.row, self.col + other.col)
 
+    def in_limits(self, limits: Position):
+        return all([
+            0 <= self.row <= limits.row,
+            0 <= self.col <= limits.col,
+        ])
+
 
 @dataclass
 class Stats():
@@ -40,9 +53,10 @@ class Stats():
 
 
 class Knight(Piece):
-    def __init__(self, name: str, position: Tuple[int, int],
+    def __init__(self, arena: game.Arena, name: str, position: Tuple[int, int],
                  stats: Tuple[int, int]):
-        super().__init__(name, position, stats)
+        super().__init__(arena, name, position, stats)
+        self.status: Status = Status.LIVE
         self.item: Optional[Item] = None
 
     def equip(self, item: Item):
@@ -62,15 +76,22 @@ class Knight(Piece):
         return super().defense + self.item.defense
 
     def move(self, direction: Direction):
-        super().move(direction)
+        try:
+            super().move(direction)
+        except OutsideLimitsException:
+            self._fall_off()
         if self.item:
             self.item.move(direction)
 
+    def _fall_off(self):
+        self.status = Status.DROWNED
+        self.position = None
+
 
 class Item(Piece):
-    def __init__(self, name: str, position: Tuple[int, int],
+    def __init__(self, arena: game.Arena, name: str, position: Tuple[int, int],
                  stats: Tuple[int, int]):
-        super().__init__(name, position, stats)
+        super().__init__(arena, name, position, stats)
         self.knight: Optional[Knight] = None
 
 
@@ -79,3 +100,16 @@ class Direction(enum.Enum):
     EAST = Position(0, 1)
     SOUTH = Position(1, 0)
     WEST = Position(0, -1)
+
+
+class Status(enum.Enum):
+    LIVE = enum.auto()
+    DROWNED = enum.auto()
+
+
+class BattlingKnightsException(Exception):
+    pass
+
+
+class OutsideLimitsException(BattlingKnightsException):
+    pass
