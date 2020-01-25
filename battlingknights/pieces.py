@@ -4,13 +4,10 @@ from typing import Tuple, Optional, Union, Any
 from dataclasses import dataclass
 import enum
 
-from battlingknights import game
-
 
 class Piece():
-    def __init__(self, arena: game.Arena, name: str, position: Tuple[int, int],
+    def __init__(self, name: str, position: Tuple[int, int],
                  stats: Tuple[int, int]):
-        self.arena: game.Arena = arena
         self.name: str = name
         self.position: Optional[Position] = Position(*position)
         self._stats: Stats = Stats(*stats)
@@ -23,11 +20,10 @@ class Piece():
     def defense(self):
         return self._stats.defense
 
-    def move(self, direction: Direction):
+    def move(self, direction: Direction, limits: Optional[Position] = None):
         new_position = self.position + direction.value
-        if not new_position.in_limits(self.arena.limits):
-            raise OutsideLimitsException(
-                f'Position {self} outside limits {self.arena.limits}')
+        if limits:
+            new_position.raise_if_invalid(limits)
         self.position = new_position
 
 
@@ -50,11 +46,14 @@ class Position():
     def __iter__(self):
         return iter((self.row, self.col))
 
-    def in_limits(self, limits: Position):
-        return all([
+    def raise_if_invalid(self, limits: Position):
+        in_limits = all([
             0 <= self.row <= limits.row,
             0 <= self.col <= limits.col,
         ])
+        if not in_limits:
+            raise OutsideLimitsException(
+                f'Position {self} outside limits {limits}')
 
 
 @dataclass
@@ -64,9 +63,9 @@ class Stats():
 
 
 class Knight(Piece):
-    def __init__(self, arena: game.Arena, name: str, position: Tuple[int, int],
+    def __init__(self, name: str, position: Tuple[int, int],
                  stats: Tuple[int, int]):
-        super().__init__(arena, name, position, stats)
+        super().__init__(name, position, stats)
         self.status: Status = Status.LIVE
         self.item: Optional[Item] = None
 
@@ -87,9 +86,9 @@ class Knight(Piece):
     def defense(self):
         return super().defense + self.item.defense
 
-    def move(self, direction: Direction):
+    def move(self, direction: Direction, limits: Optional[Position] = None):
         try:
-            super().move(direction)
+            super().move(direction, limits)
             if self.item:
                 self.item.move(direction)
         except OutsideLimitsException:
@@ -102,9 +101,9 @@ class Knight(Piece):
 
 
 class Item(Piece):
-    def __init__(self, arena: game.Arena, name: str, position: Tuple[int, int],
+    def __init__(self, name: str, position: Tuple[int, int],
                  stats: Tuple[int, int]):
-        super().__init__(arena, name, position, stats)
+        super().__init__(name, position, stats)
         self.knight: Optional[Knight] = None
 
 
