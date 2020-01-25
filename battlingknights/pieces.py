@@ -1,6 +1,6 @@
 from __future__ import annotations
 import collections
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Union, Any
 from dataclasses import dataclass
 import enum
 
@@ -36,8 +36,19 @@ class Position():
     row: int
     col: int
 
-    def __add__(self, other: Position):
-        return Position(self.row + other.row, self.col + other.col)
+    def __add__(self, other: Union[Position, Tuple[int, int]]):
+        row_change, col_change = other
+        return Position(self.row + row_change, self.col + col_change)
+
+    def __eq__(self, other: Any):
+        try:
+            row, col = other
+        except(TypeError, ValueError):
+            return False
+        return all([self.row == row, self.col == col])
+
+    def __iter__(self):
+        return iter((self.row, self.col))
 
     def in_limits(self, limits: Position):
         return all([
@@ -64,8 +75,9 @@ class Knight(Piece):
         item.knight = self
 
     def unequip(self):
-        self.item.knight = None
-        self.item = None
+        if self.item:
+            self.item.knight = None
+            self.item = None
 
     @property
     def attack(self):
@@ -78,12 +90,13 @@ class Knight(Piece):
     def move(self, direction: Direction):
         try:
             super().move(direction)
+            if self.item:
+                self.item.move(direction)
         except OutsideLimitsException:
             self._fall_off()
-        if self.item:
-            self.item.move(direction)
 
     def _fall_off(self):
+        self.unequip()
         self.status = Status.DROWNED
         self.position = None
 

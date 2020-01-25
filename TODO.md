@@ -26,7 +26,7 @@
 - [x] implement Arena limits
   - [x] position change checks limits
   - [x] implement drowning
-  - [] implement item dropping
+  - [x] implement item dropping
 
 ## Fighting
 - [] implement knight .status

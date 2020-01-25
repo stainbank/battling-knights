@@ -108,3 +108,15 @@ def test_knight_falls_off_edge_and_drowns():
         knight.move(direction)
         assert knight.status == Status.DROWNED
         assert knight.position is None
+
+
+def test_knight_throws_item_to_bank_after_falling_off(arena):
+    original_position = arena.limits.row, arena.limits.col
+    knight = Knight(arena, 'Sterling', original_position, (0, 0))
+    item = Item(arena, 'Luckies', original_position, (0, 0))
+    knight.equip(item)
+    knight.move(Direction.SOUTH)
+    assert knight.status == Status.DROWNED
+    assert knight.item is None
+    assert item.knight is None
+    assert item.position == original_position
