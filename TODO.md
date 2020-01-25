@@ -9,7 +9,7 @@
 - [x] implement `Knight`
   - [x] .item 
 - [] implement `Arena`
-  - [] .size
+  - [x] .size
   - [] .setup
   - [] .tiles
   - [] .__repr__()
@@ -20,13 +20,13 @@
 - [x] implement knight gain item bonus
 
 ## Movement
-- [] implement direction enum
-- [] implement piece movement
-- [] implement knight carrying item
-- [] implement Arena limits
-  - [] position change checks limits
-  - [] implement drowning
-  - [] implement item dropping
+- [x] implement direction enum
+- [x] implement piece movement
+- [x] implement knight carrying item
+- [x] implement Arena limits
+  - [x] position change checks limits
+  - [x] implement drowning
+  - [x] implement item dropping
 
 ## Fighting
 - [] implement knight .status
@@ -41,6 +41,13 @@
 - [] implement logging
 - [] implement final state output
 - [] write README
+
+# Clean up
+- [] Ensure full type annotations
+- [] Remove duplication in test suite
+- [] Remove unused imports
+- [] Use consistent imports
+- [] Order definitions appropriately
 
 ## Extras
 - [] read initialisation from config
