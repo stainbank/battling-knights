@@ -1,6 +1,11 @@
 import pytest
-from battlingknights.pieces import Piece, Knight, Item, Direction, Status
+from battlingknights.pieces import (Piece, Knight, Item, Direction, Status,
+                                    InvalidMoveException)
 from battlingknights.game import Arena
+
+
+ARBITRARY_POSITION = (0, 1)
+ARBITRARY_STATS = (2, 3)
 
 
 @pytest.fixture
@@ -9,25 +14,25 @@ def arena():
 
 
 @pytest.fixture
-def knight(arena):
-    return Knight('Shyamalan', (0, 1), (2, 3))
+def knight():
+    return Knight('Shyamalan', ARBITRARY_POSITION, ARBITRARY_STATS)
 
 
 @pytest.fixture
-def item(arena):
-    return Item('Panaflex Millenium', (0, 1), (2, 3))
+def item():
+    return Item('Panaflex Millenium', ARBITRARY_POSITION, ARBITRARY_STATS)
 
 
-def test_piece_created_with_position(arena):
+def test_piece_created_with_position():
     row, col = position = (2, 3)
-    piece = Piece('Example', position, (0, 0))
+    piece = Piece('Eigen', position, ARBITRARY_STATS)
     assert piece.position.row == row
     assert piece.position.col == col
 
 
-def test_piece_created_with_stats(arena):
+def test_piece_created_with_stats():
     attack, defense = stats = (2, 3)
-    piece = Piece('Example', (0, 0), stats)
+    piece = Piece('Pearson', ARBITRARY_POSITION, stats)
     assert piece.attack == attack
     assert piece.defense == defense
 
@@ -51,20 +56,18 @@ def test_knight_unequip_item(knight, item):
     assert item.knight is None
 
 
-def test_knight_gains_item_bonus(arena):
-    position = (0, 0)
-    knight_attack, knight_defense = knight_stats = (2, 3)
+def test_knight_gains_item_bonus(knight):
     item_attack, item_defense = item_stats = (4, 5)
-    knight = Knight('Elgato', position, knight_stats)
-    item = Item('Roland', position, item_stats)
+    knight_attack, knight_defense = knight.attack, knight.defense
+    item = Item('Roland', ARBITRARY_POSITION, item_stats)
     knight.equip(item)
     assert knight.attack == knight_attack + item_attack
     assert knight.defense == knight_defense + item_defense
 
 
-def test_knight_position_updates_on_move(arena):
+def test_knight_position_updates_on_move():
     row, col = original_position = (0, 0)
-    knight = Knight('Moves', original_position, (0, 0))
+    knight = Knight('Moves', original_position, ARBITRARY_STATS)
     knight.move(Direction.EAST)
     assert knight.position.row == 0
     assert knight.position.col == 1
@@ -79,10 +82,10 @@ def test_knight_position_updates_on_move(arena):
     assert knight.position.col == col
 
 
-def test_equipped_item_moves_with_knight(arena):
+def test_equipped_item_moves_with_knight():
     position = (0, 0)
-    knight = Knight('Hunter', position, (0, 0))
-    item = Item('Fist', position, (0, 0))
+    knight = Knight('Hunter', position, ARBITRARY_STATS)
+    item = Item('Fist', position, ARBITRARY_STATS)
     knight.equip(item)
     knight.move(Direction.EAST)
     assert knight.position == item.position
@@ -96,7 +99,6 @@ def test_equipped_item_moves_with_knight(arena):
 
 def test_knight_falls_off_edge_and_drowns():
     origin, limits = (0, 0), (7, 7)
-    arena = Arena(limits)
     towards_water = {
             Direction.NORTH: origin,
             Direction.EAST: limits,
@@ -104,19 +106,71 @@ def test_knight_falls_off_edge_and_drowns():
             Direction.WEST: origin,
     }
     for direction, position in towards_water.items():
-        knight = Knight('Sterling', position, (0, 0))
-        knight.move(direction, arena.limits)
+        knight = Knight('Sterling', position, ARBITRARY_STATS)
+        knight.move(direction, limits)
         assert knight.status == Status.DROWNED
         assert knight.position is None
 
 
-def test_knight_throws_item_to_bank_after_falling_off(arena):
-    original_position = arena.limits.row, arena.limits.col
-    knight = Knight('Sterling', original_position, (0, 0))
-    item = Item('Luckies', original_position, (0, 0))
+def test_knight_throws_item_to_bank_after_falling_off():
+    original_position = limits = (7, 7)
+    knight = Knight('Sterling', original_position, ARBITRARY_STATS)
+    item = Item('Luckies', original_position, ARBITRARY_STATS)
     knight.equip(item)
-    knight.move(Direction.SOUTH, arena.limits)
-    assert knight.status == Status.DROWNED
+    knight.move(Direction.SOUTH, limits)
     assert knight.item is None
     assert item.knight is None
     assert item.position == original_position
+    assert (knight.attack, knight.defense) == (0, 0)
+
+
+def test_knight_dies_when_killed(knight):
+    knight.die()
+    assert knight.status == Status.DEAD
+    assert (knight.attack, knight.defense) == (0, 0)
+
+
+def test_knight_drops_item_when_killed(knight, item):
+    knight.equip(item)
+    knight.die()
+    assert knight.item is None
+    assert item.knight is None
+
+
+def test_knight_stays_on_tile_when_killed(knight):
+    position = knight.position
+    knight.die()
+    assert knight.position == position
+
+
+def test_unalive_knights_cannot_move(knight):
+    knight.die()
+    with pytest.raises(InvalidMoveException):
+        knight.move(Direction.NORTH)
+
+
+def test_attacking_knight_kills_weaker_knight(knight):
+    weaker_stats = (knight.defense, knight.attack - 1)
+    weaker_knight = Knight('Robin', ARBITRARY_POSITION, weaker_stats)
+    knight.attack_knight(weaker_knight)
+    _test_battle_outcome(winner=knight, loser=weaker_knight)
+
+
+def test_attacking_knight_killed_by_stronger_knight(knight):
+    stronger_stats = (knight.defense, knight.attack + 1)
+    stronger_knight = Knight('Robin', ARBITRARY_POSITION, stronger_stats)
+    knight.attack_knight(stronger_knight)
+    _test_battle_outcome(winner=stronger_knight, loser=knight)
+
+
+def test_attacking_knight_kills_equal_knight(knight):
+    """The suprise bonus should win out."""
+    inverted_stats = (knight.defense, knight.attack)
+    equal_knight = Knight('Nalamayhs', ARBITRARY_POSITION, inverted_stats)
+    knight.attack_knight(equal_knight)
+    _test_battle_outcome(winner=knight, loser=equal_knight)
+
+
+def _test_battle_outcome(winner, loser):
+    assert winner.status == Status.LIVE
+    assert loser.status == Status.DEAD

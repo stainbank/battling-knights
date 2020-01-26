@@ -29,12 +29,13 @@
   - [x] implement item dropping
 
 ## Fighting
-- [] implement knight .status
-- [] implement knight suprise bonus
-- [] implement knight attack knight
-- [] implement knight die
-  - [] item dropping 
-  - [] status change
+- [x] implement knight .status
+- [x] implement knight suprise bonus
+- [x] implement knight attack knight
+- [x] implement knight die
+  - [x] item dropping
+  - [x] status change
+  - [x] movement forbidden
 
 ## Game
 - [] implement instructions
@@ -44,7 +45,7 @@
 
 # Clean up
 - [] Ensure full type annotations
-- [] Remove duplication in test suite
+- [x] Remove duplication in test suite
 - [] Remove unused imports
 - [] Use consistent imports
 - [] Order definitions appropriately
