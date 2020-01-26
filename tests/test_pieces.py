@@ -1,5 +1,6 @@
 import pytest
-from battlingknights.pieces import Piece, Knight, Item, Direction, Status
+from battlingknights.pieces import (Piece, Knight, Item, Direction, Status,
+                                    InvalidMoveException)
 from battlingknights.game import Arena
 
 
@@ -116,7 +117,32 @@ def test_knight_throws_item_to_bank_after_falling_off(arena):
     item = Item('Luckies', original_position, (0, 0))
     knight.equip(item)
     knight.move(Direction.SOUTH, arena.limits)
-    assert knight.status == Status.DROWNED
     assert knight.item is None
     assert item.knight is None
     assert item.position == original_position
+    assert (knight.attack, knight.defense) == (0, 0)
+
+
+def test_knight_dies_when_killed(knight):
+    knight.die()
+    assert knight.status == Status.DEAD
+    assert (knight.attack, knight.defense) == (0, 0)
+
+
+def test_knight_drops_item_when_killed(knight, item):
+    knight.equip(item)
+    knight.die()
+    assert knight.item is None
+    assert item.knight is None
+
+
+def test_knight_stays_on_tile_when_killed(knight):
+    position = knight.position
+    knight.die()
+    assert knight.position == position
+
+
+def test_unalive_knights_cannot_move(knight):
+    knight.die()
+    with pytest.raises(InvalidMoveException):
+        knight.move(Direction.NORTH)

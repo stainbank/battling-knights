@@ -80,13 +80,17 @@ class Knight(Piece):
 
     @property
     def attack(self):
-        return super().attack + self.item.attack
+        item_attack = self.item.attack if self.item else 0
+        return super().attack + item_attack
 
     @property
     def defense(self):
-        return super().defense + self.item.defense
+        item_defense = self.item.defense if self.item else 0
+        return super().defense + item_defense
 
     def move(self, direction: Direction, limits: Optional[Position] = None):
+        if self.status != Status.LIVE:
+            raise InvalidMoveException('Dead Knights cannot move')
         try:
             super().move(direction, limits)
             if self.item:
@@ -95,9 +99,14 @@ class Knight(Piece):
             self._fall_off()
 
     def _fall_off(self):
-        self.unequip()
-        self.status = Status.DROWNED
+        self.die()
         self.position = None
+        self.status = Status.DROWNED
+
+    def die(self):
+        self.unequip()
+        self._stats = Stats(0, 0)
+        self.status = Status.DEAD
 
 
 class Item(Piece):
@@ -117,11 +126,16 @@ class Direction(enum.Enum):
 class Status(enum.Enum):
     LIVE = enum.auto()
     DROWNED = enum.auto()
+    DEAD = enum.auto()
 
 
 class BattlingKnightsException(Exception):
     pass
 
 
-class OutsideLimitsException(BattlingKnightsException):
+class InvalidMoveException(BattlingKnightsException):
+    pass
+
+
+class OutsideLimitsException(InvalidMoveException):
     pass

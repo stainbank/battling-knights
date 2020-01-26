@@ -29,12 +29,13 @@
   - [x] implement item dropping
 
 ## Fighting
-- [] implement knight .status
+- [x] implement knight .status
 - [] implement knight suprise bonus
 - [] implement knight attack knight
-- [] implement knight die
-  - [] item dropping 
-  - [] status change
+- [x] implement knight die
+  - [x] item dropping
+  - [x] status change
+  - [x] movement forbidden
 
 ## Game
 - [] implement instructions
