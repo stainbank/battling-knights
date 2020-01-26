@@ -147,3 +147,30 @@ def test_unalive_knights_cannot_move(knight):
     knight.die()
     with pytest.raises(InvalidMoveException):
         knight.move(Direction.NORTH)
+
+
+def test_attacking_knight_kills_weaker_knight(knight):
+    weaker_stats = (knight.defense, knight.attack - 1)
+    weaker_knight = Knight('Robin', ARBITRARY_POSITION, weaker_stats)
+    knight.attack_knight(weaker_knight)
+    _test_battle_outcome(winner=knight, loser=weaker_knight)
+
+
+def test_attacking_knight_killed_by_stronger_knight(knight):
+    stronger_stats = (knight.defense, knight.attack + 1)
+    stronger_knight = Knight('Robin', ARBITRARY_POSITION, stronger_stats)
+    knight.attack_knight(stronger_knight)
+    _test_battle_outcome(winner=stronger_knight, loser=knight)
+
+
+def test_attacking_knight_kills_equal_knight(knight):
+    """The suprise bonus should win out."""
+    inverted_stats = (knight.defense, knight.attack)
+    equal_knight = Knight('Nalamayhs', ARBITRARY_POSITION, inverted_stats)
+    knight.attack_knight(equal_knight)
+    _test_battle_outcome(winner=knight, loser=equal_knight)
+
+
+def _test_battle_outcome(winner, loser):
+    assert winner.status == Status.LIVE
+    assert loser.status == Status.DEAD

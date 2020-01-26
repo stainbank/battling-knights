@@ -63,6 +63,8 @@ class Stats():
 
 
 class Knight(Piece):
+    SURPRISE_BONUS: float = 0.5
+
     def __init__(self, name: str, position: Tuple[int, int],
                  stats: Tuple[int, int]):
         super().__init__(name, position, stats)
@@ -107,6 +109,13 @@ class Knight(Piece):
         self.unequip()
         self._stats = Stats(0, 0)
         self.status = Status.DEAD
+
+    def attack_knight(self, other: Knight):
+        attack = self.attack + self.SURPRISE_BONUS
+        if attack > other.defense:
+            other.die()
+        else:
+            self.die()
 
 
 class Item(Piece):

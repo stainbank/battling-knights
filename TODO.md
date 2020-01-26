@@ -30,8 +30,8 @@
 
 ## Fighting
 - [x] implement knight .status
-- [] implement knight suprise bonus
-- [] implement knight attack knight
+- [x] implement knight suprise bonus
+- [x] implement knight attack knight
 - [x] implement knight die
   - [x] item dropping
   - [x] status change
