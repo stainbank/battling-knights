@@ -4,6 +4,8 @@ from typing import Tuple, Optional, Union, Any
 from dataclasses import dataclass
 import enum
 
+from .exceptions import OutsideLimitsException, InvalidMoveException
+
 
 class Piece():
     def __init__(self, name: str, position: Tuple[int, int],
@@ -136,15 +138,3 @@ class Status(enum.Enum):
     LIVE = enum.auto()
     DROWNED = enum.auto()
     DEAD = enum.auto()
-
-
-class BattlingKnightsException(Exception):
-    pass
-
-
-class InvalidMoveException(BattlingKnightsException):
-    pass
-
-
-class OutsideLimitsException(InvalidMoveException):
-    pass

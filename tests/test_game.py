@@ -1,6 +1,8 @@
 import pytest
 from battlingknights.game import Arena
-from battlingknights.pieces import Piece, Position, OutsideLimitsException
+from battlingknights.pieces import Piece, Item, Knight, Position
+from battlingknights.exceptions import (
+        InvalidGameStateException, OutsideLimitsException)
 from test_pieces import ARBITRARY_POSITION, ARBITRARY_STATS
 
 
@@ -39,3 +41,36 @@ def test_tile_created_from_position(arena):
 def test_invalid_tile_not_created(arena, invalid_position):
     with pytest.raises(OutsideLimitsException):
         tile = arena.tile(invalid_position)
+
+
+def test_tile_holds_pieces(arena):
+    """Since pieces fetched dynamically, tile creation time wont matter."""
+    position = (2, 3)
+    tile = arena.tile(position)
+    knight = Knight('Starboy', position, ARBITRARY_STATS)
+    items = {Item(str(i), position, ARBITRARY_STATS) for i in range(2)}
+    arena.set_pieces(knight, *items)
+    assert tile.knight is knight
+    assert len(tile.items) == len(items)
+    for item in items:
+        assert item in tile.items
+
+
+def test_tile_holds_only_one_knight(arena):
+    position = (2, 3)
+    knights = {Knight(str(i), position, ARBITRARY_STATS) for i in range(2)}
+    arena.set_pieces(*knights)
+    with pytest.raises(InvalidGameStateException):
+        tile = arena.tile(position)
+        tile.knight
+
+
+def test_empty_tile_holds_no_pieces(arena):
+    position = (2, 3)
+    empty_position = (3, 4)
+    tile = arena.tile(empty_position)
+    knight = Knight('Starboy', position, ARBITRARY_STATS)
+    items = {Item(str(i), position, ARBITRARY_STATS) for i in range(2)}
+    arena.set_pieces(knight, *items)
+    assert not tile.items
+    assert tile.knight is None

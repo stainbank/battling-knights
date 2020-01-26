@@ -33,16 +33,15 @@
   - [x] movement forbidden
 
 ## Game
-- [] implement `Arena`
+- [x] implement `Arena`
   - [x] .limits
   - [x] .pieces
-  - [] .tiles
 - [x] implement piece setting
-- [x] implement tile
-  - [] .items
-  - [] .knight
-- [] implement instructions
+- [x] implement `Tile`
+  - [x] .items
+  - [x] .knight
 - [] implement item ordering
+- [] implement instructions
 - [] implement logging
 - [] implement final state output
 - [] write README
