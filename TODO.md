@@ -45,7 +45,7 @@
 
 # Clean up
 - [] Ensure full type annotations
-- [] Remove duplication in test suite
+- [x] Remove duplication in test suite
 - [] Remove unused imports
 - [] Use consistent imports
 - [] Order definitions appropriately

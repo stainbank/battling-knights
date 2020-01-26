@@ -23,7 +23,7 @@ class Piece():
     def move(self, direction: Direction, limits: Optional[Position] = None):
         new_position = self.position + direction.value
         if limits:
-            new_position.raise_if_invalid(limits)
+            new_position.raise_if_invalid(Position(*limits))
         self.position = new_position
 
 
