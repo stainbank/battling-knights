@@ -36,8 +36,9 @@
 - [] implement `Arena`
   - [x] .limits
   - [x] .pieces
+  - [] .tiles
 - [x] implement piece setting
-- [] implement tile
+- [x] implement tile
   - [] .items
   - [] .knight
 - [] implement instructions
