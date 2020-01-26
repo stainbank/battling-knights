@@ -8,11 +8,6 @@
   - [x] .knight
 - [x] implement `Knight`
   - [x] .item 
-- [] implement `Arena`
-  - [x] .size
-  - [] .setup
-  - [] .tiles
-  - [] .__repr__()
 
 ## Equipment
 - [x] implement knight equip item
@@ -38,7 +33,15 @@
   - [x] movement forbidden
 
 ## Game
+- [] implement `Arena`
+  - [x] .limits
+  - [x] .pieces
+- [x] implement piece setting
+- [] implement tile
+  - [] .items
+  - [] .knight
 - [] implement instructions
+- [] implement item ordering
 - [] implement logging
 - [] implement final state output
 - [] write README
@@ -54,3 +57,4 @@
 - [] read initialisation from config
 - [] make installable package
 - [] implement CLI
+- [] implement arena visualisation

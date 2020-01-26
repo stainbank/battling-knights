@@ -9,11 +9,6 @@ ARBITRARY_STATS = (2, 3)
 
 
 @pytest.fixture
-def arena():
-    return Arena((7, 7))
-
-
-@pytest.fixture
 def knight():
     return Knight('Shyamalan', ARBITRARY_POSITION, ARBITRARY_STATS)
 
