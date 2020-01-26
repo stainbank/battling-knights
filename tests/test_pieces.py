@@ -44,6 +44,13 @@ def test_knight_equips_item(knight, item):
     assert item.knight is knight
 
 
+def test_equipped_knight_ignores_item(knight, item):
+    other_item = Item('Banana Bomb', knight.position, ARBITRARY_STATS)
+    knight.equip(item)
+    knight.equip(other_item)
+    assert knight.item is item
+
+
 def test_knight_unequip_item(knight, item):
     knight.equip(item)
     knight.unequip()

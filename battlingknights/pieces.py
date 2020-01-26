@@ -74,8 +74,9 @@ class Knight(Piece):
         self.item: Optional[Item] = None
 
     def equip(self, item: Item):
-        self.item = item
-        item.knight = self
+        if not self.item:
+            self.item = item
+            item.knight = self
 
     def unequip(self):
         if self.item:
