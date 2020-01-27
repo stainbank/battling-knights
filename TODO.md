@@ -40,12 +40,12 @@
 - [x] implement `Tile`
   - [x] .items
   - [x] .knight
-- [] implement item ordering
+- [x] implement item ordering
 - [x] implement instruction
   - [x] implement item pickup
   - [x] implement knight encounter
 - [x] implement instructions from text
-- [] implement final state output
+- [x] implement final state output
 - [] write README
 
 # Clean up
