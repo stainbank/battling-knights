@@ -44,7 +44,7 @@
 - [x] implement instruction
   - [x] implement item pickup
   - [x] implement knight encounter
-- [] implement instructions from text
+- [x] implement instructions from text
 - [] implement final state output
 - [] write README
 

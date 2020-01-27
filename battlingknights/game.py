@@ -2,7 +2,8 @@ from __future__ import annotations
 from typing import Tuple, Set, Union, Optional, Callable
 
 from .pieces import Piece, Knight, Item, Position, Direction
-from .exceptions import InvalidGameStateException, InvalidMoveException
+from .exceptions import (InvalidGameStateException, InvalidMoveException,
+                         OutsideLimitsException)
 
 
 ChoosesItem = Callable[[Set[Item]], Optional[Item]]
@@ -23,7 +24,11 @@ class Arena:
     def run_instruction(self, knight: Knight, direction: Direction):
         if knight.position is None:
             raise InvalidMoveException('Dead knights cannot move.')
-        target: Tile = self.tile(knight.position + direction)
+        try:
+            target: Tile = self.tile(knight.position + direction)
+        except(OutsideLimitsException):
+            knight._fall_off()
+            return
         defender: Optional[Knight] = target.knight
         item: Optional[Item] = self.choose_item(target.items)
         knight.move(direction)
