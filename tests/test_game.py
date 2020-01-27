@@ -1,6 +1,7 @@
 import pytest
+from unittest.mock import patch
 from battlingknights.game import Arena
-from battlingknights.pieces import Piece, Item, Knight, Position
+from battlingknights.pieces import Piece, Item, Knight, Position, Direction
 from battlingknights.exceptions import (
         InvalidGameStateException, OutsideLimitsException)
 from test_pieces import ARBITRARY_POSITION, ARBITRARY_STATS
@@ -74,3 +75,29 @@ def test_empty_tile_holds_no_pieces(arena):
     arena.set_pieces(knight, *items)
     assert not tile.items
     assert tile.knight is None
+
+
+def test_knight_moves_on_instruction(arena):
+    starting_position = (0, 0)
+    knight = Knight('Merciless Ming', starting_position, ARBITRARY_STATS)
+    arena.set_pieces(knight)
+    arena.run_instruction(knight, Direction.SOUTH)
+    assert knight.position == (1, 0)
+
+
+def test_knight_equips_item_on_move(arena):
+    starting_position = (0, 0)
+    knight = Knight('Merciless Ming', starting_position, ARBITRARY_STATS)
+    item = Item('Ming Vase', (0, 1), ARBITRARY_STATS)
+    arena.set_pieces(knight, item)
+    arena.run_instruction(knight, Direction.EAST)
+    assert knight.item is item
+
+
+def test_knights_fight_on_move(arena):
+    knight = Knight('Marcus Junius', (0, 0), ARBITRARY_STATS)
+    other_knight = Knight('Gaius Julius', (1, 0), ARBITRARY_STATS)
+    arena.set_pieces(knight, other_knight)
+    with patch.object(knight, 'attack_knight'):
+        arena.run_instruction(knight, Direction.SOUTH)
+        knight.attack_knight.assert_called_with(other_knight)

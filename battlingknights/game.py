@@ -1,8 +1,8 @@
 from __future__ import annotations
-from typing import Tuple, Set, Union
+from typing import Tuple, Set, Union, Optional
 
-from .pieces import Position, Piece, Knight, Item
-from .exceptions import InvalidGameStateException
+from .pieces import Piece, Knight, Item, Position, Direction
+from .exceptions import InvalidGameStateException, InvalidMoveException
 
 
 class Arena:
@@ -15,10 +15,29 @@ class Arena:
             piece.position.raise_if_invalid(self.limits)
         self.pieces = self.pieces.union(pieces)
 
+    def run_instruction(self, knight: Knight, direction: Direction):
+        if knight.position is None:
+            raise InvalidMoveException('Dead knights cannot move.')
+        target: Tile = self.tile(knight.position + direction)
+        defender: Optional[Knight] = target.knight
+        item: Optional[Item] = self._choose_best_item(target.items)
+        knight.move(direction)
+        if item:
+            knight.equip(item)
+        if defender:
+            knight.attack_knight(defender)
+        # should an unequipped victor pick up his fallen enemies item?
+
     def tile(self, position: Union[Position, Tuple[int, int]]):
         position = Position(*position)
         position.raise_if_invalid(self.limits)
         return Tile(self, position)
+
+    def _choose_best_item(self, items: Set[Item]):
+        try:
+            return items.pop()  # choose any item until preference implemented
+        except KeyError:
+            return None
 
 
 class Tile:
