@@ -9,11 +9,6 @@ ARBITRARY_STATS = (2, 3)
 
 
 @pytest.fixture
-def arena():
-    return Arena((7, 7))
-
-
-@pytest.fixture
 def knight():
     return Knight('Shyamalan', ARBITRARY_POSITION, ARBITRARY_STATS)
 
@@ -47,6 +42,13 @@ def test_knight_equips_item(knight, item):
     knight.equip(item)
     assert knight.item is item
     assert item.knight is knight
+
+
+def test_equipped_knight_ignores_item(knight, item):
+    other_item = Item('Banana Bomb', knight.position, ARBITRARY_STATS)
+    knight.equip(item)
+    knight.equip(other_item)
+    assert knight.item is item
 
 
 def test_knight_unequip_item(knight, item):

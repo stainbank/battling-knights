@@ -4,6 +4,8 @@ from typing import Tuple, Optional, Union, Any
 from dataclasses import dataclass
 import enum
 
+from .exceptions import OutsideLimitsException, InvalidMoveException
+
 
 class Piece():
     def __init__(self, name: str, position: Tuple[int, int],
@@ -21,7 +23,10 @@ class Piece():
         return self._stats.defense
 
     def move(self, direction: Direction, limits: Optional[Position] = None):
-        new_position = self.position + direction.value
+        """TODO: reimplement as `move_to(position)."""
+        if self.position is None:
+            raise InvalidMoveException('Dead knights cannot move')
+        new_position = self.position + direction
         if limits:
             new_position.raise_if_invalid(Position(*limits))
         self.position = new_position
@@ -32,8 +37,8 @@ class Position():
     row: int
     col: int
 
-    def __add__(self, other: Union[Position, Tuple[int, int]]):
-        row_change, col_change = other
+    def __add__(self, direction: Direction):
+        row_change, col_change = direction.value
         return Position(self.row + row_change, self.col + col_change)
 
     def __eq__(self, other: Any):
@@ -72,8 +77,9 @@ class Knight(Piece):
         self.item: Optional[Item] = None
 
     def equip(self, item: Item):
-        self.item = item
-        item.knight = self
+        if not self.item:
+            self.item = item
+            item.knight = self
 
     def unequip(self):
         if self.item:
@@ -136,15 +142,3 @@ class Status(enum.Enum):
     LIVE = enum.auto()
     DROWNED = enum.auto()
     DEAD = enum.auto()
-
-
-class BattlingKnightsException(Exception):
-    pass
-
-
-class InvalidMoveException(BattlingKnightsException):
-    pass
-
-
-class OutsideLimitsException(InvalidMoveException):
-    pass
