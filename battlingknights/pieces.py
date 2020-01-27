@@ -23,7 +23,10 @@ class Piece():
         return self._stats.defense
 
     def move(self, direction: Direction, limits: Optional[Position] = None):
-        new_position = self.position + direction.value
+        """TODO: reimplement as `move_to(position)."""
+        if self.position is None:
+            raise InvalidMoveException('Dead knights cannot move')
+        new_position = self.position + direction
         if limits:
             new_position.raise_if_invalid(Position(*limits))
         self.position = new_position
@@ -34,8 +37,8 @@ class Position():
     row: int
     col: int
 
-    def __add__(self, other: Union[Position, Tuple[int, int]]):
-        row_change, col_change = other
+    def __add__(self, direction: Direction):
+        row_change, col_change = direction.value
         return Position(self.row + row_change, self.col + col_change)
 
     def __eq__(self, other: Any):

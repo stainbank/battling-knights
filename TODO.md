@@ -42,6 +42,7 @@
   - [x] .knight
 - [] implement item ordering
 - [] implement instructions
+  - [] implement knight encounter
 - [] implement logging
 - [] implement final state output
 - [] write README
@@ -58,3 +59,5 @@
 - [] make installable package
 - [] implement CLI
 - [] implement arena visualisation
+- [] refactor move checking to arena
+  - [] knight.move_to(position)
