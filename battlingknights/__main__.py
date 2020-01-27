@@ -1,4 +1,5 @@
 import functools
+import json
 
 from battlingknights.pieces import Knight, Item, Position, Direction
 from battlingknights.game import Arena
@@ -10,16 +11,16 @@ BASE_STATS = (1, 1)
 
 def make_pieces():
     knights = {
-        'R': Knight('RED', (0, 0), BASE_STATS),
-        'B': Knight('BLUE', (7, 0), BASE_STATS),
-        'G': Knight('GREEN', (7, 7), BASE_STATS),
-        'Y': Knight('YELLOW', (0, 7), BASE_STATS),
+        'R': Knight('red', (0, 0), BASE_STATS),
+        'B': Knight('blue', (7, 0), BASE_STATS),
+        'G': Knight('green', (7, 7), BASE_STATS),
+        'Y': Knight('yellow', (0, 7), BASE_STATS),
     }
     items = [  # in priority order
-        Item('Axe', (2, 2), (2, 0)),
-        Item('MagicStaff', (5, 2), (1, 1)),
-        Item('Dagger', (2, 5), (1, 0)),
-        Item('Helmet', (5, 5), (1, 1)),
+        Item('axe', (2, 2), (2, 0)),
+        Item('magic_staff', (5, 2), (1, 1)),
+        Item('dagger', (2, 5), (1, 0)),
+        Item('helmet', (5, 5), (1, 1)),
     ]
     return knights, items
 
@@ -49,15 +50,39 @@ def make_instructions(knights, filepath='moves.txt'):
     return instructions()
 
 
+def get_final_state(knights, items):
+    state = {
+        **{knight.name: make_knight_state(knight) for knight in knights},
+        **{item.name: make_item_state(item) for item in items}
+    }
+    return state
+
+
+def make_knight_state(knight):
+    position = tuple(knight.position) if knight.position else None
+    status = knight.status.name
+    item = knight.item.name if knight.item else None
+    attack, defense = knight.attack, knight.defense
+    return (position, status, item, attack, defense)
+
+
+def make_item_state(item):
+    position = tuple(item.position)
+    equipped = bool(item.knight)
+    return (position, equipped)
+
+
 def main():
-    knights, items = make_pieces()
+    knight_mapping, items = make_pieces()
+    knights = knight_mapping.values()
     item_chooser = functools.partial(choose_by_order, ordered_items=items)
     arena = Arena(LIMITS, item_chooser=item_chooser)
-    arena.set_pieces(*knights.values(), *items)
-    instructions = make_instructions(knights)
-    for knight, direction in instructions:
+    arena.set_pieces(*knights, *items)
+    for knight, direction in make_instructions(knight_mapping):
         arena.run_instruction(knight, direction)
-        print(knight.name, knight.position)
+    state = get_final_state(knights, items)
+    with open('final_state.json', 'w') as o:
+        json.dump(state, o)
 
 
 if __name__ == '__main__':
